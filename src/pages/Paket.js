@@ -1,6 +1,7 @@
 import React from "react"
 import { Modal } from "bootstrap";
 import axios from "axios";
+import { baseUrl, formatNumber, authorization } from "../config";
 
 class Paket extends React.Component {
     constructor() {
@@ -45,7 +46,7 @@ class Paket extends React.Component {
         if (window.confirm("Apakah anda yakin ingin menghapus data ini?")) {
             let endpoint = "http://localhost:8000/paket/" + id_paket
 
-            axios.delete(endpoint)
+            axios.delete(endpoint, authorization)
                 .then(response => {
                     window.alert(response.data.message)
                     this.getData()
@@ -97,7 +98,7 @@ class Paket extends React.Component {
             // let temp = this.state.pakets
             // temp.push(data)//menambah data dalam array
             // this.setState({ pakets: temp })
-            axios.post(endpoint, data)
+            axios.post(endpoint, data, authorization)
                 .then(response => {
                     window.alert(response.data.message)
                     this.getData()
@@ -114,7 +115,7 @@ class Paket extends React.Component {
                 id_paket: this.state.id_paket
             }
 
-            axios.put(endpoint, data)
+            axios.put(endpoint, data, authorization)
                 .then(response => {
                     window.alert(response.data.message)
                     this.getData()
@@ -137,7 +138,7 @@ class Paket extends React.Component {
 
     getData() {
         let endpoint = "http://localhost:8000/paket"
-        axios.get(endpoint)
+        axios.get(endpoint, authorization)
             .then(response => {
                 this.setState({ pakets: response.data })
             })
@@ -149,7 +150,7 @@ class Paket extends React.Component {
         this.getData()
         let user = JSON.parse(localStorage.getItem("user"))
 
-        if (user.role === 'admin') {
+        if (user.role === 'Admin') {
             this.setState({
                 visible: true
             })
@@ -162,14 +163,22 @@ class Paket extends React.Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="container my-3">
                 <div className="card">
-                    <div className="card-header bg-warning">
-                        <h3 className="text-white">
+                    <div className="card-header bg-success1">
+                        <h3 className="text-white"><i class="fa-solid fa-box-open mx-3"></i>
                             List of Packages
                         </h3>
                     </div>
                     <div className="card-body">
+                        <div className="col-lg-3">
+                        <button className={`btn btn-color my-1 text-white
+                        ${this.state.visible ? `` : `d-none`}`}
+                            onClick={() => this.tambahData()}><i class="fa-regular fa-plus mx-2"></i>
+                            Tambah Paket
+                        </button>
+                        </div>
+
                         <ul className="list-group">
                             {this.state.pakets.map(paket => (
                                 <li className="list-group-item">
@@ -184,35 +193,29 @@ class Paket extends React.Component {
                                         </div>
                                         <div className="col-lg-2">
                                             <small className="text-info">Action</small> <br />
-                                            <button className={`btn btn-sm btn-warning mx-1
+                                            <small className={`btn btn-sm btn-warning mx-1 mt-2
                                             ${this.state.visible ? `` : `d-none`}`}
                                                 onClick={() => this.ubahData(paket.id_paket)}>
-                                                Edit
-                                            </button>
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </small>
 
-                                            <button className={`btn btn-sm btn-danger
+                                            <small className={`btn btn-sm btn-danger mx-1 mt-2
                                             ${this.state.visible ? `` : `d-none`}`}
                                                 onClick={() => this.hapusData(paket.id_paket)}>
-                                                Hapus
-                                            </button>
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </small>
                                         </div>
                                     </div>
                                 </li>
                             ))}
                         </ul>
-
-                        <button className={`btn btn-warning my-1
-                        ${this.state.visible ? `` : `d-none`}`}
-                            onClick={() => this.tambahData()}>
-                            Tambahkan Paket
-                        </button>
                     </div>
                 </div>
                 {/* form modal data Paket */}
                 <div className="modal" id="modal_paket">
                     <div className="modal-dialog modal-md">
                         <div className="modal-content">
-                            <div className="modal-header bg-warning">
+                            <div className="modal-header bg-form">
                                 <h4 className="text-white">
                                     Form Data Paket
                                 </h4>
@@ -230,7 +233,7 @@ class Paket extends React.Component {
                                         value={this.state.harga}
                                         onChange={(ev) => this.setState({ harga: ev.target.value })} />
 
-                                    <button className="btn btn-warning" type="submit">
+                                    <button className="btn btn-save text-white" type="submit">
                                         Simpan
                                     </button>
                                 </form>

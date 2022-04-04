@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { Modal } from "bootstrap";
-
+import { authorization } from "../config";
 
 export default class FormTransaksi extends React.Component {
     constructor() {
@@ -25,7 +25,7 @@ export default class FormTransaksi extends React.Component {
 
     getMember() {
         let endpoint = "http://localhost:8000/member"
-        axios.get(endpoint)
+        axios.get(endpoint, authorization)
             .then(response => {
                 this.setState({ members: response.data })
             })
@@ -34,7 +34,7 @@ export default class FormTransaksi extends React.Component {
 
     getPaket() {
         let endpoint = "http://localhost:8000/paket"
-        axios.get(endpoint)
+        axios.get(endpoint, authorization)
             .then(response => {
                 this.setState({ pakets: response.data })
             })
@@ -95,6 +95,31 @@ export default class FormTransaksi extends React.Component {
     }
 
     simpanTransaksi() {
+        if (document.getElementById("member").value == "") {
+			alert("Missing member");
+			return;
+		}
+		if (document.getElementById("tgl").value == "") {
+			alert("Missing tanggal transaksi");
+			return;
+		}
+		if (document.getElementById("batas_waktu").value == "") {
+			alert("Missing batas waktu");
+			return;
+		}
+		if (document.getElementById("status").value == "") {
+			alert("Missing status");
+			return;
+		}
+		if (document.getElementById("pilih").value == "") {
+			alert("Tidak ada paket yang dipilih");
+			return;
+		}
+		if (document.getElementById("jml").value == "") {
+			alert("Jumlah paket belum diinput");
+			return;
+		}
+
         let endpoint = "http://localhost:8000/transaksi"
         let user = JSON.parse(localStorage.getItem("user"))
         let newData = {
@@ -108,7 +133,7 @@ export default class FormTransaksi extends React.Component {
             
         }
 
-        axios.post(endpoint, newData)
+        axios.post(endpoint, newData, authorization)
             .then(response => {
                 window.alert(response.data.message)
                 // this.getData()
@@ -120,9 +145,9 @@ export default class FormTransaksi extends React.Component {
         this.getMember()
         this.getPaket()
 
-        let user = localStorage.getItem("user")
+        let user = JSON.parse(localStorage.getItem("user"))
 
-        if (user.role !== 'admin' && user.role !== 'kasir'){
+        if (user.role !== 'Admin' && user.role !== 'Kasir'){
             window.alert(
                 `Maaf anda tidak berhak untuk mengakses halaman ini.`
                 )
@@ -133,7 +158,7 @@ export default class FormTransaksi extends React.Component {
 
     render() {
         return (
-            <div className="card">
+            <div className="card my-3">
                 <div className="card-header bg-primary">
                     <h4 className="text-white">
                         Form Transaksi
@@ -141,10 +166,12 @@ export default class FormTransaksi extends React.Component {
                 </div>
 
                 <div className="card-body">
+                    
                     Member
-                    <select className="form-control mb-2"
+                    <select className="form-control mb-2" id="member"
                         value={this.state.id_member}
                         onChange={e => this.setState({ id_member: e.target.value })}>
+                            <option value="">--Pilih Member</option>
                         {this.state.members.map(member => (
                             <option value={member.id_member}>
                                 {member.nama}
@@ -153,12 +180,12 @@ export default class FormTransaksi extends React.Component {
                     </select>
 
                     Tanggal Transaksi
-                    <input type="date" className="form-control mb-2"
+                    <input type="date" className="form-control mb-2" id="tgl"
                         value={this.state.tgl}
                         onChange={e => this.setState({ tgl: e.target.value })} />
 
                     Batas Waktu
-                    <input type="date" className="form-control mb-2"
+                    <input type="date" className="form-control mb-2" id="batas_waktu"
                         value={this.state.batas_waktu}
                         onChange={e => this.setState({ batas_waktu: e.target.value })} />
 
@@ -168,7 +195,7 @@ export default class FormTransaksi extends React.Component {
                         onChange={e => this.setState({ tgl_bayar: e.target.value })} />
 
                     Status Bayar
-                    <select className="form-control mb-2"
+                    <select className="form-control mb-2" id="status"
                         value={this.state.dibayar}
                         onChange={e => this.setState({ dibayar: e.target.value })}>
                         <option value={true}>Sudah Dibayar</option>
@@ -176,9 +203,9 @@ export default class FormTransaksi extends React.Component {
                     </select>
 
                     <br />
-                    <button className="btn btn-primary"
+                    <button className="btn btn-primary col-lg-2" 
                         onClick={() => this.addPaket()}>
-                        Tambah Paket
+                        Pilih Paket
                     </button>
 
                     {/* tampilkan isi detail */}
@@ -211,7 +238,7 @@ export default class FormTransaksi extends React.Component {
                     ))}
 
                     <br />
-                    <button className="btn btn-success" type="submit"
+                    <button className="btn btn-success col-lg-2" type="submit"
                     onClick={() => this.simpanTransaksi()}>
                         Simpan Transaksi
                     </button>
@@ -227,7 +254,7 @@ export default class FormTransaksi extends React.Component {
                                 <div className="modal-body">
                                     <form onSubmit={(e) => this.tambahPaket(e)}>
                                         Pilih Paket
-                                        <select className="form-control md-2"
+                                        <select className="form-control md-1 "  id="pilih"
                                             value={this.state.id_paket}
                                             onChange={e => this.setState({ id_paket: e.target.value })}>
                                             <option value="">Pilih Paket</option>
@@ -238,12 +265,12 @@ export default class FormTransaksi extends React.Component {
                                             ))}
                                         </select>
 
-                                        Jumlah (Qty)
-                                        <input type="number" className="form-control mb-2"
+                                        Jumlah (kg)
+                                        <input type="number" className="form-control mb-2" id="jml"
                                             value={this.state.qyt}
                                             onChange={e => this.setState({ qyt: e.target.value })} />
 
-                                        <button type="submit" className="btn btn-success">
+                                        <button type="submit" className="btn btn-success col-lg-3">
                                             Tambah
                                         </button>
                                     </form>

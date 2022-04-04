@@ -1,5 +1,6 @@
 import React from "react"
 import axios from "axios"
+import './Login.css';
 
 class Login extends React.Component {
     constructor() {
@@ -24,10 +25,11 @@ class Login extends React.Component {
                     localStorage.setItem("token", result.data.token)
                     localStorage.setItem(
                         "user", JSON.stringify(result.data.user)
-                        )
-                    window.alert("yeay! you're logged<3")
+                    )
+                    window.alert("Congratulations! You have successfully logged in! Have a good day!<3")
+                    window.location.href = "/"
                 } else {
-                    window.alert("can't login! please check your username and password!")
+                    window.alert("Can't login:( Please check your username and password!")
                 }
             })
             .catch(error => console.log(error))
@@ -35,37 +37,24 @@ class Login extends React.Component {
 
     render() {
         return (
-            <div className="container">
-                <div className="col-lg-6" style={{ margin: "0 auto" }}>
-                    <div className="card">
-
-                        <div className="card-header bg-success">
-                            <h4 className="text-white">Login</h4>
-                        </div>
-
-                        <div className="card-body">
-
-                            <form onSubmit={ev => this.loginProcess(ev)}>
-                                Username
-                                <input type="text" className="form-control"
-                                    required value={this.state.username}
-                                    onChange={ev => this.setState({ username: ev.target.value })} />
-
-                                Password
-                                <input type="password" className="form-control mb-2"
-                                    required value={this.state.username.password}
-                                    onChange={ev => this.setState({ password: ev.target.value })} />
-
-                                <button type="submit" className="btn btn-success">
-                                    Login
-                                </button>
-                            </form>
-
-                        </div>
-
+            <div className="login">
+            <div className="loginContainer">
+                <div >
+                    <div>
+                        <label>Login</label>
+                        <form onSubmit={ev => this.loginProcess(ev)}>
+                            <input type="text" placeholder="Username" className="mb-3"
+                                required value={this.state.username}
+                                onChange={ev => this.setState({ username: ev.target.value })} />
+                            <input type="password" placeholder="Password" className="mb-3"
+                                required value={this.state.username.password}
+                                onChange={ev => this.setState({ password: ev.target.value })} />
+                            <button type="submit">Sign in</button>
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
         )
     }
 

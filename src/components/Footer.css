@@ -1,0 +1,14 @@
+.main-footer {
+    color: white;
+    /* background-color: #1597E5; */
+    background: radial-gradient(
+      ellipse at left bottom,
+      rgb(17, 60, 252) 45%,
+      rgb(21, 151, 229) 100%,
+      rgb(105, 218, 219) 0%
+    );
+    padding-top: 3em;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+  }

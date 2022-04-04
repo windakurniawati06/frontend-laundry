@@ -1,6 +1,7 @@
 import React from "react"
 import { Modal } from "bootstrap";
 import axios from "axios";
+import { baseUrl, formatNumber, authorization } from "../config";
 
 class Member extends React.Component {
     constructor() {
@@ -52,20 +53,12 @@ class Member extends React.Component {
         if (window.confirm("Apakah anda yakin ingin menghapus data ini?")) {
             let endpoint = "http://localhost:8000/member/" + id_member
 
-            axios.delete(endpoint)
+            axios.delete(endpoint, authorization)
                 .then(response => {
                     window.alert(response.data.message)
                     this.getData()
                 })
                 .catch(error => console.log(error))
-            //mancari posisi index dari data yang akan dihapus
-            // let temp = this.state.members
-            // let index = temp.findIndex(member => member.id_member === id_member)
-
-            //dihapus datanya pada array
-            // temp.splice(index,1)
-
-            // this.setState({members: temp})
         }
     }
 
@@ -92,6 +85,23 @@ class Member extends React.Component {
     }
 
     simpanData(event) {
+        if (document.getElementById("nama").value == "") {
+			alert("Missing Nama");
+			return;
+		}
+		if (document.getElementById("alamat").value == "") {
+			alert("Missing alamat");
+			return;
+		}
+        if (document.getElementById("jenis_kelamin").value == "") {
+			alert("Missing Jenis Kelamin");
+			return;
+		}
+		if (document.getElementById("telepon").value == "") {
+			alert("Missing Telepon");
+			return;
+        }
+
         event.preventDefault();
         //prevenDefault -> digunakan untuk mencegah aksi default dari form submit.
 
@@ -110,7 +120,7 @@ class Member extends React.Component {
             // let temp = this.state.members
             // temp.push(data)//menambah data dalam array
             // this.setState({ members: temp })
-            axios.post(endpoint, data)
+            axios.post(endpoint, data, authorization)
                 .then(response => {
                     window.alert(response.data.message)
                     this.getData()
@@ -129,7 +139,7 @@ class Member extends React.Component {
                 id_member: this.state.id_member
             }
 
-            axios.put(endpoint, data)
+            axios.put(endpoint, data, authorization)
                 .then(response => {
                     window.alert(response.data.message)
                     this.getData()
@@ -155,7 +165,7 @@ class Member extends React.Component {
 
     getData() {
         let endpoint = "http://localhost:8000/member"
-        axios.get(endpoint)
+        axios.get(endpoint, authorization)
             .then(response => {
                 this.setState({ members: response.data })
             })
@@ -184,7 +194,7 @@ class Member extends React.Component {
         })
 
         //cara kedua
-        if (user.role === 'admin' || user.role === 'kasir') {
+        if (user.role === 'Admin' || user.role === 'kasir') {
             this.setState({
                 visible: true
             })
@@ -197,14 +207,25 @@ class Member extends React.Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="container my-3">
                 <div className="card">
-                    <div className="card-header bg-success">
-                        <h3 className="text-white">
+                    <div className="card-header bg-success1">
+                        <h3 className="text-white"><i class="fa-solid fa-address-card mx-3"></i>
                             List of Members
                         </h3>
                     </div>
                     <div className="card-body">
+                        <div className="col-lg-3">
+                            <button className={`btn btn-color my-1 text-white 
+                        ${this.state.visible ? `` : `d-none`}`}
+                                onClick={() => this.tambahData()}><i class="fa-regular fa-plus mx-2"></i>
+                                Tambah Member
+                            </button>
+                            <div className="col-lg-3">
+                                {this.showAddButton()}
+                            </div>
+                        </div>
+
                         <ul className="list-group">
                             {this.state.members.map(member => (
                                 <li className="list-group-item">
@@ -214,26 +235,26 @@ class Member extends React.Component {
                                             <h5>{member.nama}</h5>
                                         </div>
                                         <div className="col-lg-2">
-                                            <small className="text-info">Jenis Kelamin</small> <br />
+                                            <small className="text-info" >Jenis Kelamin</small> <br />
                                             <h5>{member.jenis_kelamin}</h5>
                                         </div>
                                         <div className="col-lg-3">
-                                            <small className="text-info">Telepon</small> <br />
+                                            <small className="text-info" >Telepon</small> <br />
                                             <h5>{member.telepon}</h5>
                                         </div>
                                         <div className="col-lg-2">
                                             <small className="text-info">Action</small> <br />
-                                            <button className={`btn btn-sm btn-warning mx-1 
+                                            <small className={`btn btn-sm btn-warning mx-1 mt-2
                                             ${this.state.visible ? `` : `d-none`}`}
                                                 onClick={() => this.ubahData(member.id_member)}>
-                                                Edit
-                                            </button>
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </small>
 
-                                            <button className={`btn btn-sm btn-danger 
+                                            <small className={`btn btn-sm btn-danger mx-1 mt-2
                                             ${this.state.visible ? `` : `d-none`}`}
                                                 onClick={() => this.hapusData(member.id_member)}>
-                                                Hapus
-                                            </button>
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </small>
                                         </div>
                                         <div className="col-lg-11">
                                             <small className="text-info">Alamat</small> <br />
@@ -243,9 +264,6 @@ class Member extends React.Component {
                                 </li>
                             ))}
                         </ul>
-                        <div className="col-lg-3">
-                            {this.showAddButton()}
-                        </div>
                     </div>
                 </div>
 
@@ -253,7 +271,7 @@ class Member extends React.Component {
                 <div className="modal" id="modal_member">
                     <div className="modal-dialog modal-md">
                         <div className="modal-content">
-                            <div className="modal-header bg-success">
+                            <div className="modal-header bg-form">
                                 <h4 className="text-white">
                                     Form Data Member
                                 </h4>
@@ -262,29 +280,30 @@ class Member extends React.Component {
                             <div className="modal-body">
                                 <form onSubmit={ev => this.simpanData(ev)}>
                                     Nama
-                                    <input type="text" className="form-control mb-2"
+                                    <input type="text" className="form-control mb-2" id="nama"
                                         value={this.state.nama}
                                         onChange={(ev) => this.setState({ nama: ev.target.value })} />
 
                                     Alamat
-                                    <input type="text" className="form-control mb-2"
+                                    <input type="text" className="form-control mb-2" id="alamat"
                                         value={this.state.alamat}
                                         onChange={(ev) => this.setState({ alamat: ev.target.value })} />
 
                                     Jenis Kelamin
-                                    <select className="form-control mb-2"
+                                    <select className="form-control mb-2" id="jenis_kelamin"
                                         value={this.state.jenis_kelamin}
                                         onChange={(ev) => this.setState({ jenis_kelamin: ev.target.value })}>
+                                        <option value="">--Pilih Jenis Kelamin--</option>
                                         <option value="Perempuan">Perempuan</option>
                                         <option value="Laki laki">Laki laki</option>
                                     </select>
 
                                     Telepon
-                                    <input type="text" className="form-control mb-2"
+                                    <input type="text" className="form-control mb-2" id="telepon"
                                         value={this.state.telepon}
                                         onChange={(ev) => this.setState({ telepon: ev.target.value })} />
 
-                                    <button className="btn btn-success" type="submit">
+                                    <button className="btn btn-save text-white" type="submit">
                                         Simpan
                                     </button>
                                 </form>

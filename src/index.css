@@ -11,3 +11,44 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.bg-success1 {
+  background: radial-gradient(
+      ellipse at left bottom,
+      rgb(17, 60, 252) 45%,
+      rgb(21, 151, 229) 100%,
+      rgb(105, 218, 219) 0%
+    );
+}
+
+.list-group-item{
+  background-color: #EFFFFD !important;
+  margin-bottom: 7px;
+}
+
+.btn-color{
+  background: radial-gradient(
+      ellipse at left bottom,
+      rgb(17, 60, 252) 45%,
+      rgb(21, 151, 229) 100%,
+      rgb(105, 218, 219) 0%
+    );
+}
+
+.bg-form{
+  background: radial-gradient(
+      ellipse at left bottom,
+      rgb(17, 60, 252) 45%,
+      rgb(21, 151, 229) 100%,
+      rgb(105, 218, 219) 0%
+    );
+}
+
+.btn-save{
+  background: radial-gradient(
+      ellipse at left bottom,
+      rgb(17, 60, 252) 45%,
+      rgb(21, 151, 229) 100%,
+      rgb(105, 218, 219) 0%
+    );
+}

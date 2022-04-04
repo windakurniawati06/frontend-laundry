@@ -1,6 +1,6 @@
 import React from "react"
 import axios from "axios"
-import { baseUrl, formatNumber } from "../config"
+import { baseUrl, formatNumber, authorization } from "../config"
 
 
 export default class Dashboard extends React.Component {
@@ -8,10 +8,10 @@ export default class Dashboard extends React.Component {
         super()
 
         this.state = {
-            jmlMember : 0,
-            jmlPaket : 0,
-            jmlTransaksi : 0,
-            income : 0
+            jmlMember: 0,
+            jmlPaket: 0,
+            jmlTransaksi: 0,
+            income: 0
         }
 
         if (!localStorage.getItem("token")) {
@@ -19,94 +19,114 @@ export default class Dashboard extends React.Component {
         }
     }
 
-    getSummary(){
+    getSummary() {
 
         //get jumlah member
         let endpoint = `${baseUrl}/member`
-        axios.get(endpoint)
-        .then(response => {
-            this.setState({jmlMember: response.data.length})
-        })
-        .catch(error => console.log(error))
+        axios.get(endpoint, authorization)
+            .then(response => {
+                this.setState({ jmlMember: response.data.length })
+            })
+            .catch(error => console.log(error))
 
         //get jumlah paket
         endpoint = `${baseUrl}/paket`
-        axios.get(endpoint)
-        .then(response => {
-            this.setState({jmlPaket: response.data.length})
-        })
-        .catch(error => console.log(error))
+        axios.get(endpoint, authorization)
+            .then(response => {
+                this.setState({ jmlPaket: response.data.length })
+            })
+            .catch(error => console.log(error))
 
         //get jumlah transaksi
         endpoint = `${baseUrl}/transaksi`
-        axios.get(endpoint)
-        .then(response => {
-            let dataTransaksi = response.data
-            let income = 0
-            for (let i = 0; i< dataTransaksi.length; i++) {
-              let total = 0;
-              for (let j = 0; j < dataTransaksi[i].detail_transaksi.length; j++) {
-                  let harga = dataTransaksi[i].detail_transaksi[j].paket.harga
-                  let qyt = dataTransaksi[i].detail_transaksi[j].qyt
+        axios.get(endpoint, authorization)
+            .then(response => {
+                let dataTransaksi = response.data
+                let income = 0
+                for (let i = 0; i < dataTransaksi.length; i++) {
+                    let total = 0;
+                    for (let j = 0; j < dataTransaksi[i].detail_transaksi.length; j++) {
+                        let harga = dataTransaksi[i].detail_transaksi[j].paket.harga
+                        let qyt = dataTransaksi[i].detail_transaksi[j].qyt
 
-                  total += (harga * qyt)
-              }
+                        total += (harga * qyt)
+                    }
 
-              income += total
-               
-            }
-            this.setState({
-                jmlTransaksi: response.data.length,
-                income: income    
+                    income += total
+
+                }
+                this.setState({
+                    jmlTransaksi: response.data.length,
+                    income: income
+                })
             })
-        })
-        .catch(error => console.log(error))
+            .catch(error => console.log(error))
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.getSummary()
     }
 
     render() {
         return (
-            <div className="container">
+            <div className="container ">
                 <div className="row">
-                    <div className="col-lg-4 col-md-6">
-                        <div className="card text-center bg-success m-1 text-white">
-                            <div className="card-body">
-                                <h4 className="card-title">Member</h4>
-                                <h2>{this.state.jmlMember}</h2>
-                                <h6>Member yang telah tergabung</h6>
+                <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4 mt-3">
+                        <div class="card">
+                            <div class="card-header p-3 pt-2">
+                                <div class="text-center pt-1">
+                                    <p class="text-sm mb-0 text-capitalize"><i class="fa-solid fa-users mx-2"></i>Members</p>
+                                    <h4 class="mb-0">{this.state.jmlMember}</h4>
+                                </div>
+                            </div>
+                            <hr class="dark horizontal my-0" />
+                            <div class="card-footer p-3">
+                                <p class="mb-0"><span class="text-success text-sm font-weight-bolder">Members have joined</span></p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="col-lg-4 col-md-6">
-                        <div className="card text-center bg-primary m-1 text-white">
-                            <div className="card-body">
-                                <h4 className="card-title">Paket</h4>
-                                <h2>{this.state.jmlPaket}</h2>
-                                <h6>Paket yang kami layani</h6>
+                    <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4 mt-3">
+                        <div class="card">
+                            <div class="card-header p-3 pt-2">
+                                <div class="text-center pt-1">
+                                    <p class="text-sm mb-0 text-capitalize"><i class="fa-solid fa-box-open mx-2"></i>Packages</p>
+                                    <h4 class="mb-0">{this.state.jmlPaket}</h4>
+                                </div>
                             </div>
-                        </div>
-
-                    </div>
-
-                    <div className="col-lg-4 col-md-6">
-                        <div className="card text-center bg-secondary m-1" text-white>
-                            <div className="card-body">
-                                <h4 className="card-title">Transaksi</h4>
-                                <h2>{this.state.jmlTransaksi}</h2>
-                                <h6>Transaksi yang telah kami selesaikan</h6>
+                            <hr class="dark horizontal my-0" />
+                            <div class="card-footer p-3">
+                                <p class="mb-0"><span class="text-success text-sm font-weight-bolder">Available packages</span></p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="col-lg-6">
-                        <div className="card bg-secondary m-1">
-                            <div className="card-body">
-                                <h4 className="card-title">Income :</h4>
-                                <h2>Rp {formatNumber(this.state.income)}</h2>
+                    <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4 mt-3">
+                        <div class="card">
+                            <div class="card-header p-3 pt-2">
+                                <div class="text-center pt-1">
+                                    <p class="text-sm mb-0 text-capitalize"><i class="fa-solid fa-tent-arrow-left-right mx-2"></i>Transaction</p>
+                                    <h4 class="mb-0">{this.state.jmlTransaksi}</h4>
+                                </div>
+                            </div>
+                            <hr class="dark horizontal my-0" />
+                            <div class="card-footer p-3">
+                                <p class="mb-0"><span class="text-success text-sm font-weight-bolder">Transaction complete</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 col-sm-6 mb-xl-0 mb-4 mt-3">
+                        <div class="card">
+                            <div class="card-header p-3 pt-2">
+                                <div class="pt-1">
+                                    <p class="text-sm mb-0 text-capitalize"><i class="fa-solid fa-sack-dollar mx-2 "></i>Income :</p>
+                                    <h4 class="mb-0">Rp {formatNumber(this.state.income)}</h4>
+                                </div>
+                            </div>
+                            <hr class="dark horizontal my-0" />
+                            <div class="card-footer p-3">
+                                <p class="mb-0"><span class="text-success text-sm font-weight-bolder">Latest income</span></p>
                             </div>
                         </div>
                     </div>

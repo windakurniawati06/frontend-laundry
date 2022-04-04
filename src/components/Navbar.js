@@ -9,10 +9,11 @@ function Logout() {
 export default function Navbar(props) {
     return (
         <div>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <div className="container-fluid">
-                    <a className="navbar-brand">
-                        Laundry
+            {/* <nav className="navbar navbar-light" style="background-color: #e3f2fd;"> */}
+            <nav className="navbar navbar-expand-lg navbar-light" style={{backgroundColor : '#1597E5'}}>
+                <div className="container">
+                    <a className="navbar-brand text-white"><i class="fa-solid fa-soap mx-1"></i>
+                        Timmy Laundry
                     </a>
 
                     {/* button toggler */}
@@ -27,40 +28,42 @@ export default function Navbar(props) {
                     {/* define menus */}
                     <div className="collapse navbar-collapse" id="#myNav">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li className="nav-item">
+                            <li className="nav-item">
                                 <Link to="/" className="nav-link">
-                                    Home
+                                <i class="fa-solid fa-house text-white"></i>
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link to="/member" className="nav-link">
+                                <Link to="/member" className="nav-link text-white">
                                     Member
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link to="/paket" className="nav-link">
-                                    Paket
+                                <Link to="/paket" className="nav-link text-white">
+                                    Packages
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link to="/user" className="nav-link">
+                                <Link to="/user" className="nav-link text-white ">
                                     User
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link to="/transaksi" className="nav-link">
-                                    Transaksi
+                                <Link to="/transaksi" className="nav-link text-white">
+                                    Transaction 
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link to="/form_transaksi" className="nav-link">
+                                <Link to="/form_transaksi" className="nav-link text-white">
                                     Add Transaksi
                                 </Link>
                             </li>
-                            <li className="nav-item">
+                        </ul>
+                        <ul className="navbar-nav ms-auto">
+                        <li className="nav-item">
                                 <Link to="/auth" className="nav-link"
                                     onClick={() => Logout()}>
-                                    Logout
+                                        <i class="fa-solid fa-right-from-bracket"></i>
                                 </Link>
                             </li>
                         </ul>

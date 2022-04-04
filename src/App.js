@@ -8,7 +8,7 @@ import Transaksi from "./pages/Transaksi";
 import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 import FormTransaksi from "./pages/FormTransaksi";
-import Footer from "./Footer";
+import Footer from "./components/Footer";
 import { BrowserRouter, Route, Routes} from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 
